@@ -14,13 +14,14 @@ type PixKeyRepositoryInterface interface {
 	AddBank(bank *Bank) error
 	AddAccount(account *Account) error
 	FindAccount(id string) (*Account, error)
+	FindBank(id string) (*Bank, error)
 }
 
 type PixKey struct {
 	Base      `valid:"required"`
 	Kind      string   `json:"kind" valid:"notnull"`
 	Key       string   `json:"key" valid:"notnull"`
-	AccountID string   `json:"account_id" valid:"notnull"`
+	AccountID string   `gorm:"column:account_id;type:uuid;not null" valid:"-"`
 	Account   *Account `valid:"-"`
 	Status    string   `json:"status" valid:"notnull"`
 }
@@ -42,13 +43,13 @@ func (pixKey *PixKey) isValid() error {
 	return nil
 }
 
-func newPixKey(kind string, key string, accountID string, account *Account, status string) (*PixKey, error) {
+func NewPixKey(kind string, key string, account *Account) (*PixKey, error) {
 	pixKey := PixKey{
 		Kind:      kind,
 		Key:       key,
-		AccountID: accountID,
+		AccountID: account.ID,
 		Account:   account,
-		Status:    status,
+		Status:    "active",
 	}
 
 	pixKey.ID = uuid.NewV4().String()
