@@ -7,11 +7,11 @@ import (
 )
 
 type PixUseCase struct {
-	PixRepository model.PixKeyRepositoryInterface
+	PixKeyRepository model.PixKeyRepositoryInterface
 }
 
 func (p *PixUseCase) RegisterKey(key string, kind string, accountId string) (*model.PixKey, error) {
-	account, err := p.PixRepository.FindAccount(accountId)
+	account, err := p.PixKeyRepository.FindAccount(accountId)
 	if err != nil {
 		return nil, err
 	}
@@ -21,7 +21,7 @@ func (p *PixUseCase) RegisterKey(key string, kind string, accountId string) (*mo
 		return nil, err
 	}
 
-	p.PixRepository.RegisterKey(pixKey)
+	p.PixKeyRepository.RegisterKey(pixKey)
 	if pixKey.ID == "" {
 		return nil, errors.New("Unable to register key")
 	}
@@ -30,7 +30,7 @@ func (p *PixUseCase) RegisterKey(key string, kind string, accountId string) (*mo
 }
 
 func (p *PixUseCase) FindKey(key string, kind string) (*model.PixKey, error) {
-	pixKey, err := p.PixRepository.FindKeyByKind(key, kind)
+	pixKey, err := p.PixKeyRepository.FindKeyByKind(key, kind)
 	if err != nil {
 		return nil, err
 	}
